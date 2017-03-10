@@ -29,10 +29,10 @@ public class CreatureController {
         WS3DProxy proxy = new WS3DProxy();
             try {   
                 World w = World.getInstance();
-                w.reset();
-                World.createFood(0, 350, 75);
-                World.createFood(0, 100, 220);
-                World.createFood(0, 250, 210);
+                //w.reset();
+                //World.createFood(0, 350, 75);
+                //World.createFood(0, 100, 220);
+                //World.createFood(0, 250, 210);
                 Creature c = proxy.createCreature(100,450,0);
                 w.setEnvironmentHeight(100);
                 c.start();
