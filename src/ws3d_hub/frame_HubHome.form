@@ -58,10 +58,7 @@
                           </Group>
                       </Group>
                   </Group>
-                  <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                      <Component id="jL_Creature_Selected" min="-2" pref="335" max="-2" attributes="0"/>
-                  </Group>
+                  <Component id="jL_Creature_Selected" alignment="0" min="-2" pref="335" max="-2" attributes="0"/>
               </Group>
               <EmptySpace pref="252" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
@@ -79,11 +76,12 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
-              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="jB_CreateNewCreature" min="-2" max="-2" attributes="0"/>
-                  <Component id="jL_Creature_Selected" pref="28" max="32767" attributes="0"/>
+              <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jB_CreateNewCreature" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jL_Creature_Selected" alignment="3" pref="28" max="32767" attributes="0"/>
               </Group>
+              <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <EmptySpace min="-2" pref="77" max="-2" attributes="0"/>
@@ -118,7 +116,7 @@
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jB_Start_New_World" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="7" max="32767" attributes="0"/>
+              <EmptySpace pref="13" max="32767" attributes="0"/>
               <Component id="jB_Reset_World" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="302" max="-2" attributes="0"/>
           </Group>
@@ -130,6 +128,7 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Create new Creature"/>
         <Property name="actionCommand" type="java.lang.String" value="jB_new_creature"/>
+        <Property name="focusable" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jB_CreateNewCreatureActionPerformed"/>
@@ -143,6 +142,7 @@
     <Component class="javax.swing.JTextField" name="JTextBox_PosXtoGo">
       <Properties>
         <Property name="text" type="java.lang.String" value="0"/>
+        <Property name="focusable" type="boolean" value="false"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel2">
@@ -153,6 +153,7 @@
     <Component class="javax.swing.JTextField" name="JTextBox_PosYtoGo">
       <Properties>
         <Property name="text" type="java.lang.String" value="0"/>
+        <Property name="focusable" type="boolean" value="false"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel3">
@@ -173,6 +174,7 @@
     <Component class="javax.swing.JTextField" name="JTextBox_PosXtoGo1">
       <Properties>
         <Property name="text" type="java.lang.String" value="0"/>
+        <Property name="focusable" type="boolean" value="false"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel5">
@@ -188,11 +190,13 @@
     <Component class="javax.swing.JButton" name="jB_MoveGo">
       <Properties>
         <Property name="text" type="java.lang.String" value="Go!"/>
+        <Property name="focusable" type="boolean" value="false"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="jB_Reset_World">
       <Properties>
         <Property name="text" type="java.lang.String" value="Reset World"/>
+        <Property name="focusable" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jB_Reset_WorldActionPerformed"/>
@@ -201,6 +205,7 @@
     <Component class="javax.swing.JButton" name="jB_Start_New_World">
       <Properties>
         <Property name="text" type="java.lang.String" value="Start New World"/>
+        <Property name="focusable" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jB_Start_New_WorldActionPerformed"/>
@@ -218,6 +223,7 @@
             <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
               <StringArray count="0"/>
             </Property>
+            <Property name="focusable" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="valueChanged" listener="javax.swing.event.ListSelectionListener" parameters="javax.swing.event.ListSelectionEvent" handler="jL_CreatureListValueChanged"/>

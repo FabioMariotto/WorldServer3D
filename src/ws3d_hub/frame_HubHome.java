@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.ListModel;
 import ws3dproxy.CommandExecException;
 import ws3dproxy.WS3DProxy;
@@ -29,26 +30,48 @@ import ws3dproxy.model.WorldPoint;
 public class frame_HubHome extends JFrame implements KeyListener {
 
     WS3DProxy MyProxy;
-    List Creatures = new Stack();
+    List CreatureControllers = new Stack();
     DefaultListModel CreatureIDs = new DefaultListModel();
     String SelectedCreature = "";
+    CreatureController CC;
     
     @Override
     public void keyPressed(KeyEvent e) {
-        try {
-            if (e.getKeyCode() == KeyEvent.VK_UP) {
-                //creature.start();
-                //creature.updateState();
-                //creature.move(2.0, 2.0, 5.0);
-            } 
-            else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                //creature.start();
-                //creature.updateState();
-                //creature.move(-2.0, -2.0, 5.0);
+        System.out.println("Key Listening...");
+        if (!CreatureControllers.isEmpty()){
+            
+            for (int i = 0; i < CreatureControllers.size(); i++) {
+                CC = (CreatureController) CreatureControllers.get(i);
+                if(CC.CreatureName.equals(SelectedCreature))
+                    break;
             }
-        }
-        catch (Exception ex) {
-            System.out.println("Socket Error. " + ex.getMessage());
+            try {
+                 if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    CC.ThisCreature.updateState();
+                    //CC.ThisCreature.ge
+                    //creature.updateState();
+                    
+                    CC.ThisCreature = MyProxy.getCreature("0");
+                    CC.ThisCreature.move(2.0, 2.0, 5.0);
+                } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    CC.ThisCreature.start();
+                    //creature.updateState();
+                    
+                    CC.ThisCreature = MyProxy.getCreature("1");
+                    CC.ThisCreature.move(-2.0, -2.0, 5.0);
+                } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    CC.ThisCreature.start();
+                    //creature.updateState();
+                    CC.ThisCreature.rotate(1.0);
+                } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                    CC.ThisCreature.start();
+                    //creature.updateState();
+                    CC.ThisCreature.rotate(-1.0);
+                }
+            }
+            catch (Exception ex) {
+                System.out.println("Socket Error. " + ex.getMessage());
+            }
         }
     }
     
@@ -95,8 +118,8 @@ public class frame_HubHome extends JFrame implements KeyListener {
     
     frame_HubHome() {
         addKeyListener(this);
-        //setFocusable(true);
-        //setFocusTraversalKeysEnabled(false);
+        setFocusable(true);
+        setFocusTraversalKeysEnabled(false);
         initComponents();
         
     }
@@ -132,6 +155,7 @@ public class frame_HubHome extends JFrame implements KeyListener {
 
         jB_CreateNewCreature.setText("Create new Creature");
         jB_CreateNewCreature.setActionCommand("jB_new_creature");
+        jB_CreateNewCreature.setFocusable(false);
         jB_CreateNewCreature.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jB_CreateNewCreatureActionPerformed(evt);
@@ -141,10 +165,12 @@ public class frame_HubHome extends JFrame implements KeyListener {
         jL_Creature_Selected.setText("Selected creature:");
 
         JTextBox_PosXtoGo.setText("0");
+        JTextBox_PosXtoGo.setFocusable(false);
 
         jLabel2.setText("Move creature to:");
 
         JTextBox_PosYtoGo.setText("0");
+        JTextBox_PosYtoGo.setFocusable(false);
 
         jLabel3.setText("PosX:");
 
@@ -153,14 +179,17 @@ public class frame_HubHome extends JFrame implements KeyListener {
         jLabel4.setText("Movement time =");
 
         JTextBox_PosXtoGo1.setText("0");
+        JTextBox_PosXtoGo1.setFocusable(false);
 
         jLabel5.setText("seconds.");
 
         jL_Speed_OfMove.setText("Speed = ?");
 
         jB_MoveGo.setText("Go!");
+        jB_MoveGo.setFocusable(false);
 
         jB_Reset_World.setText("Reset World");
+        jB_Reset_World.setFocusable(false);
         jB_Reset_World.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jB_Reset_WorldActionPerformed(evt);
@@ -168,12 +197,14 @@ public class frame_HubHome extends JFrame implements KeyListener {
         });
 
         jB_Start_New_World.setText("Start New World");
+        jB_Start_New_World.setFocusable(false);
         jB_Start_New_World.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jB_Start_New_WorldActionPerformed(evt);
             }
         });
 
+        jL_CreatureList.setFocusable(false);
         jL_CreatureList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 jL_CreatureListValueChanged(evt);
@@ -212,9 +243,7 @@ public class frame_HubHome extends JFrame implements KeyListener {
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(2, 2, 2)
                                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jL_Creature_Selected, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jL_Creature_Selected, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 252, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -227,10 +256,11 @@ public class frame_HubHome extends JFrame implements KeyListener {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGap(15, 15, 15)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jB_CreateNewCreature)
                     .addComponent(jL_Creature_Selected, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE))
+                .addGap(3, 3, 3)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(77, 77, 77)
@@ -257,7 +287,7 @@ public class frame_HubHome extends JFrame implements KeyListener {
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jB_Start_New_World)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
                 .addComponent(jB_Reset_World)
                 .addGap(302, 302, 302))
         );
@@ -268,18 +298,38 @@ public class frame_HubHome extends JFrame implements KeyListener {
     private void jB_CreateNewCreatureActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_CreateNewCreatureActionPerformed
        //TO DO: test if world was launched
         try {
+                
+            String CreatureName = (String)JOptionPane.showInputDialog(
+                    this,
+                    "Choose a creature name:",
+                    "Creature Creation",
+                    JOptionPane.PLAIN_MESSAGE);
             
-            Creature c = MyProxy.createCreature(400,400,0);
-            c.start();
-            Creatures.add(c); 
-            CreatureIDs.addElement(c.getName());// attributes.getName());// getIndex());
-            SelectedCreature = c.getName();
-            jL_Creature_Selected.setText("Selected Creature: " + SelectedCreature);
-            jL_CreatureList.setModel(CreatureIDs);
-        } catch (CommandExecException ex) {
+            System.out.println("Choosen name=" + CreatureName);
+            if(CreatureIDs.contains(CreatureName)){
+                JOptionPane.showMessageDialog(this, "Name already exists");
+            }
+            else if (null==CreatureName){
+                System.out.println("Creation canceled");
+            }
+            else {
+                System.out.println("Creating Creature...");
+                //
+                CreatureController CC = new CreatureController(400, 400, CreatureName, MyProxy);
+                //});
+                CreatureControllers.add(CC); 
+                CreatureIDs.addElement(CC.CreatureName);// attributes.getName());// getIndex());
+                SelectedCreature = CC.CreatureName;
+                jL_Creature_Selected.setText("Selected Creature: " + SelectedCreature);
+                jL_CreatureList.setModel(CreatureIDs);
+                CC.ThisCreature.updateState();
+                System.out.println("Creature Created! Index=" + CC.ThisCreature.getIndex().toString() + " Name=" +CC.ThisCreature.getName().toString());
+            }
+        } catch (Exception e) {
             System.out.println("Error trying to create new creature");
             //Logger.getLogger(frame_HubHome.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
     }//GEN-LAST:event_jB_CreateNewCreatureActionPerformed
 
     private void jB_Start_New_WorldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_Start_New_WorldActionPerformed
@@ -291,6 +341,8 @@ public class frame_HubHome extends JFrame implements KeyListener {
                 World w = World.getInstance();
                 w.reset();
                 w.setEnvironmentHeight(100);
+                
+                
             } catch (CommandExecException e) {
                  System.out.println("Erro capturado"); 
             }
@@ -300,7 +352,12 @@ public class frame_HubHome extends JFrame implements KeyListener {
     private void jB_Reset_WorldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_Reset_WorldActionPerformed
         try {   
                 World w = World.getInstance();
-                w.reset();               
+                w.reset();
+                CreatureControllers.removeAll(CreatureControllers);
+                CreatureIDs.removeAllElements();
+                jL_Creature_Selected.setText("Selected Creature: " + SelectedCreature);
+                jL_CreatureList.removeAll();
+                jL_CreatureList.updateUI();
             } catch (CommandExecException e) {
                  System.out.println("Erro capturado"); 
             }
@@ -333,4 +390,5 @@ public class frame_HubHome extends JFrame implements KeyListener {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
+
 }

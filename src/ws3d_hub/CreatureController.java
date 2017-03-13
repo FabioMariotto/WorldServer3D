@@ -6,11 +6,7 @@
 package ws3d_hub;
 
 //import com.sun.glass.events.KeyEvent;
-import com.sun.java.accessibility.util.AWTEventMonitor;
-import java.awt.event.KeyEvent;
-import java.awt.KeyEventDispatcher;
-import java.awt.event.KeyListener;
-import javafx.scene.input.KeyCode;
+
 import ws3dproxy.CommandExecException;
 import ws3dproxy.WS3DProxy;
 import ws3dproxy.model.Creature;
@@ -23,23 +19,20 @@ import ws3dproxy.model.WorldPoint;
  */
 public class CreatureController {
 
+    public String CreatureName;
+    public Creature ThisCreature;
     
-    
-    public CreatureController() {
-        WS3DProxy proxy = new WS3DProxy();
+    public CreatureController(int x, int y, String name, WS3DProxy proxy) {
             try {   
-                World w = World.getInstance();
-                //w.reset();
-                //World.createFood(0, 350, 75);
-                //World.createFood(0, 100, 220);
-                //World.createFood(0, 250, 210);
-                Creature c = proxy.createCreature(100,450,0);
-                w.setEnvironmentHeight(100);
-                c.start();
-                WorldPoint position = c.getPosition();
-                double pitch = c.getPitch();
-                double fuel = c.getFuel();                      
-                c.moveto(4, 0, 0);
+                //WS3DProxy MyProxy = new WS3DProxy();
+                ThisCreature = proxy.createCreature(x,y,0);
+                ThisCreature.start();
+                CreatureName = name;
+                
+//                WorldPoint position = c.getPosition();
+//                double pitch = c.getPitch();
+//                double fuel = c.getFuel();                      
+//                c.moveto(4, 0, 0);
             } catch (CommandExecException e) {
                  System.out.println("Erro capturado"); 
             }            
