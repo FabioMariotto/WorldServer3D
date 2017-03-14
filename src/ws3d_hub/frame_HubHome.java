@@ -9,7 +9,11 @@ import ws3d_hub.CreatureController;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
+import java.util.Random;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,6 +21,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.ListModel;
+import org.json.Test;
 import ws3dproxy.CommandExecException;
 import ws3dproxy.WS3DProxy;
 import ws3dproxy.model.Creature;
@@ -34,10 +39,11 @@ public class frame_HubHome extends JFrame implements KeyListener {
     DefaultListModel CreatureIDs = new DefaultListModel();
     String SelectedCreature = "";
     CreatureController CC;
+    Random Rand = new Random();
     
     @Override
     public void keyPressed(KeyEvent e) {
-        System.out.println("Key Listening...");
+        //System.out.println("Key Listening...");
         if (!CreatureControllers.isEmpty()){
             
             for (int i = 0; i < CreatureControllers.size(); i++) {
@@ -50,44 +56,51 @@ public class frame_HubHome extends JFrame implements KeyListener {
                     CC.ThisCreature.updateState();
                     //CC.ThisCreature.ge
                     //creature.updateState();
-                    
-                    CC.ThisCreature = MyProxy.getCreature("0");
-                    CC.ThisCreature.move(2.0, 2.0, 5.0);
+                    CC.ThisCreature.start();
+                    //CC.ThisCreature = MyProxy.getCreature("0");
+                    CC.ThisCreature.move(1.0, 1.0, 5.0);
                 } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
                     CC.ThisCreature.start();
                     //creature.updateState();
                     
-                    CC.ThisCreature = MyProxy.getCreature("1");
-                    CC.ThisCreature.move(-2.0, -2.0, 5.0);
+                    //CC.ThisCreature = MyProxy.getCreature("1");
+                    CC.ThisCreature.move(-1.0, -1.0, 5.0);
                 } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
                     CC.ThisCreature.start();
                     //creature.updateState();
-                    CC.ThisCreature.rotate(1.0);
+                    CC.ThisCreature.rotate(2.0);
                 } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
                     CC.ThisCreature.start();
                     //creature.updateState();
-                    CC.ThisCreature.rotate(-1.0);
+                    CC.ThisCreature.rotate(-2.0);
                 }
             }
-            catch (Exception ex) {
-                System.out.println("Socket Error. " + ex.getMessage());
+            catch (CommandExecException ex) {
+                System.out.println("Socket Error on key press. " + ex.getMessage());
             }
         }
     }
     
     @Override
     public void keyReleased(KeyEvent e) {
-        //try {
-            //creature.stop();
-        //} catch (CommandExecException ex) {
-        //    System.out.println("Socket Error. " + ex.getMessage());
-        //}
-
+        if (!CreatureControllers.isEmpty()){
+            
+                for (int i = 0; i < CreatureControllers.size(); i++) {
+                    CC = (CreatureController) CreatureControllers.get(i);
+                    if(CC.CreatureName.equals(SelectedCreature))
+                        break;
+                }
+            try {
+                CC.ThisCreature.stop();
+            } catch (CommandExecException ex) {
+                System.out.println("Socket Error on key release. " + ex.getMessage());
+            }
+        }
     }
     
     @Override
     public void keyTyped(KeyEvent e) {
-        System.out.println("keyTyped = " + e.getKeyChar());
+        //System.out.println("keyTyped = " + e.getKeyChar());
     }
   
     
@@ -118,9 +131,13 @@ public class frame_HubHome extends JFrame implements KeyListener {
     
     frame_HubHome() {
         addKeyListener(this);
+        
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
         initComponents();
+        JTextBox_PosXtoGo.addKeyListener(this);
+        JTextBox_PosYtoGo.addKeyListener(this);
+        JTextBox_velo_to_go.addKeyListener(this);
         
     }
     
@@ -142,14 +159,18 @@ public class frame_HubHome extends JFrame implements KeyListener {
         jLabel3 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        JTextBox_PosXtoGo1 = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        jL_Speed_OfMove = new javax.swing.JLabel();
+        JTextBox_velo_to_go = new javax.swing.JTextField();
         jB_MoveGo = new javax.swing.JButton();
         jB_Reset_World = new javax.swing.JButton();
         jB_Start_New_World = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jL_CreatureList = new javax.swing.JList<>();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jB_create_random_food = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -165,28 +186,26 @@ public class frame_HubHome extends JFrame implements KeyListener {
         jL_Creature_Selected.setText("Selected creature:");
 
         JTextBox_PosXtoGo.setText("0");
-        JTextBox_PosXtoGo.setFocusable(false);
 
         jLabel2.setText("Move creature to:");
 
         JTextBox_PosYtoGo.setText("0");
-        JTextBox_PosYtoGo.setFocusable(false);
 
         jLabel3.setText("PosX:");
 
         jLabel1.setText("PosY:");
 
-        jLabel4.setText("Movement time =");
+        jLabel4.setText("Movement speed =");
 
-        JTextBox_PosXtoGo1.setText("0");
-        JTextBox_PosXtoGo1.setFocusable(false);
-
-        jLabel5.setText("seconds.");
-
-        jL_Speed_OfMove.setText("Speed = ?");
+        JTextBox_velo_to_go.setText("1");
 
         jB_MoveGo.setText("Go!");
         jB_MoveGo.setFocusable(false);
+        jB_MoveGo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jB_MoveGoActionPerformed(evt);
+            }
+        });
 
         jB_Reset_World.setText("Reset World");
         jB_Reset_World.setFocusable(false);
@@ -212,12 +231,28 @@ public class frame_HubHome extends JFrame implements KeyListener {
         });
         jScrollPane1.setViewportView(jL_CreatureList);
 
+        jLabel6.setText("UP ARROW = Move forward");
+
+        jLabel7.setText("DOWN ARROW = Move Backwards");
+
+        jLabel8.setText("LEFT ARROW = Turn Left");
+
+        jLabel9.setText("RIGHT ARROW = Turn Right");
+
+        jB_create_random_food.setText("Create Food Randomly");
+        jB_create_random_food.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jB_create_random_foodActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jL_Creature_Selected, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -230,21 +265,19 @@ public class frame_HubHome extends JFrame implements KeyListener {
                                     .addComponent(JTextBox_PosYtoGo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(JTextBox_PosXtoGo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jLabel4)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(JTextBox_PosXtoGo1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel5))
-                                    .addComponent(jL_Speed_OfMove))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jB_MoveGo))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jB_MoveGo))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(JTextBox_velo_to_go, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(2, 2, 2)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addComponent(jL_Creature_Selected, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 252, Short.MAX_VALUE)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 270, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -252,6 +285,11 @@ public class frame_HubHome extends JFrame implements KeyListener {
                         .addComponent(jB_CreateNewCreature, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
                         .addComponent(jB_Start_New_World, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(26, 26, 26))
+            .addComponent(jSeparator1)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(32, 32, 32)
+                .addComponent(jB_create_random_food)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -263,33 +301,36 @@ public class frame_HubHome extends JFrame implements KeyListener {
                 .addGap(3, 3, 3)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(77, 77, 77)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(JTextBox_PosXtoGo, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(JTextBox_PosXtoGo1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(JTextBox_PosYtoGo, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel1)
-                                    .addComponent(jL_Speed_OfMove, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(24, 24, 24)
-                                .addComponent(jB_MoveGo))))
-                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(5, 5, 5)
+                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(JTextBox_PosXtoGo, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(JTextBox_velo_to_go, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(JTextBox_PosYtoGo, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1)
+                            .addComponent(jB_MoveGo)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jB_Start_New_World)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
                 .addComponent(jB_Reset_World)
-                .addGap(302, 302, 302))
+                .addGap(21, 21, 21)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jB_create_random_food)
+                .addGap(230, 230, 230))
         );
 
         pack();
@@ -336,15 +377,17 @@ public class frame_HubHome extends JFrame implements KeyListener {
 
         //check if wordserver is running, if not, run it and do the bellow code
         
-            try {  
+            try {
+                //String path = Test.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+                //String decodedPath = URLDecoder.decode(path, "UTF-8");
+                //System.out.println(path);
+                //Runtime.getRuntime().exec("c:\\program files\\test\\test.exe", null, new File("c:\\program files\\test\\"));
                 MyProxy = new WS3DProxy();
                 World w = World.getInstance();
                 w.reset();
                 w.setEnvironmentHeight(100);
-                
-                
-            } catch (CommandExecException e) {
-                 System.out.println("Erro capturado"); 
+            } catch (CommandExecException ex) {
+            Logger.getLogger(frame_HubHome.class.getName()).log(Level.SEVERE, null, ex);
             }
             
     }//GEN-LAST:event_jB_Start_New_WorldActionPerformed
@@ -368,27 +411,66 @@ public class frame_HubHome extends JFrame implements KeyListener {
         jL_Creature_Selected.setText("Selected Creature: " + SelectedCreature);
     }//GEN-LAST:event_jL_CreatureListValueChanged
 
+    private void jB_MoveGoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_MoveGoActionPerformed
+        if (!CreatureControllers.isEmpty()){
+            
+            for (int i = 0; i < CreatureControllers.size(); i++) {
+                CC = (CreatureController) CreatureControllers.get(i);
+                if(CC.CreatureName.equals(SelectedCreature))
+                    break;
+            }
+            try {
+                CC.ThisCreature.start();      
+                CC.ThisCreature.moveto(Double.parseDouble(JTextBox_velo_to_go.getText()), Double.parseDouble(JTextBox_PosXtoGo.getText()), Double.parseDouble(JTextBox_PosYtoGo.getText()));            
+                System.out.println("Vel=" + JTextBox_velo_to_go.getText() + " X=" +JTextBox_PosXtoGo.getText() + " Y=" +JTextBox_PosYtoGo.getText());
+            } catch (Exception e) {
+            }
+     
+            
+        }
+    }//GEN-LAST:event_jB_MoveGoActionPerformed
+
+    private void jB_create_random_foodActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_create_random_foodActionPerformed
+            //World w = World.getInstance();
+        try {
+            int x;
+            x = Rand.nextInt(400);
+            int y; 
+                    y= Rand.nextInt(400);
+            System.out.println("x=" + String.valueOf(x) + " y=" + String.valueOf(y));
+            World.createFood(0, x, y);//Rand.nextInt(400), Rand.nextInt(400));
+        } catch (CommandExecException ex) {
+            Logger.getLogger(frame_HubHome.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            
+            
+    }//GEN-LAST:event_jB_create_random_foodActionPerformed
+
 
 
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField JTextBox_PosXtoGo;
-    private javax.swing.JTextField JTextBox_PosXtoGo1;
     private javax.swing.JTextField JTextBox_PosYtoGo;
+    private javax.swing.JTextField JTextBox_velo_to_go;
     private javax.swing.JButton jB_CreateNewCreature;
     private javax.swing.JButton jB_MoveGo;
     private javax.swing.JButton jB_Reset_World;
     private javax.swing.JButton jB_Start_New_World;
+    private javax.swing.JButton jB_create_random_food;
     private javax.swing.JList<String> jL_CreatureList;
     private javax.swing.JLabel jL_Creature_Selected;
-    private javax.swing.JLabel jL_Speed_OfMove;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
     // End of variables declaration//GEN-END:variables
 
 }
